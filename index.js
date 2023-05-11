@@ -2,19 +2,21 @@ const express = require("express");
 const body = require('body-parser');
 const app = express();
 const PORT = 3000;
+
 app.use(body.json());
+app.use(express.static('html_file'));
 
 app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
+  res.sendFile(__dirname + "/html_file/index.html");
 });
 
-let books = [];
+let book = [];
 
-app.get("/books", (req, res) => {
-  res.json(books);
+app.get("/book", (req, res) => {
+  res.json(book);
 });
 
-app.post("/books", (req, res) => {
+app.post("/book", (req, res) => {
   const { title, author, publishedDate } = req.body;
 
   const random = Math.floor(Math.random()*10000000000000)+1;
@@ -24,18 +26,18 @@ app.post("/books", (req, res) => {
     res.json(`Title and Author is require....`);
   }
   else{
-    books.push({ id, title, author, publishedDate });
+    book.push({ id, title, author, publishedDate });
 
     res.json({ id, title, author, publishedDate });
   }
 });
 
-app.delete("/books/:id", (req, res) => {
+app.delete("/book/:id", (req, res) => {
   const { id } = req.params;
-  const bookIndex = books.findIndex((book) => book.id === id);
+  const bookIndex = book.findIndex((book) => book.id === id);
 
   if (bookIndex >= 0) {
-    books.splice(bookIndex, 1);
+    book.splice(bookIndex, 1);
     res.json(`Book with ID ${id} successfully deleted.`);
   } else {
     res.status(404);
@@ -44,7 +46,7 @@ app.delete("/books/:id", (req, res) => {
 });
 
 app.use((req, res) => {
-  res.sendFile(__dirname + "/error.html");
+  res.sendFile(__dirname + "/html_file/error.html");
 });
 
 app.listen(PORT, () => {
